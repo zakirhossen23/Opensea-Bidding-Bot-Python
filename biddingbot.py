@@ -5,9 +5,8 @@ from selenium import webdriver
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import TimeoutException
-
-
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.keys import Keys
 options = webdriver.ChromeOptions()
 options.add_extension("metamask.crx")
 driver=webdriver.Chrome(options=options)
@@ -44,6 +43,21 @@ while True:
         break
 driver.close()
 driver.switch_to.window(driver.window_handles[0])
-driver.get("https://opensea.io/collection/cool-cats-nft")
 
+actions = ActionChains(driver)
 
+driver.get("https://opensea.io/collection/cool-cats-nft?search[sortAscending]=true&search[sortBy]=PRICE")
+time.sleep(2)
+while True:
+    try:
+        image = driver.find_element(By.XPATH,'//*[@id="__next"]/div[1]/main/div/div/div[3]/div/div/div/div[3]/div[3]/div[2]/div/div/div[1]/article')
+        image.click()
+        if "assets" in driver.current_url:
+            break
+    except:pass
+
+actions.move_to_element(driver.find_element(By.XPATH,"//div[@id='__next']/div/main/div/div/div/div[2]/div/div/div/section/div[2]/div[3]/div/div/button")).perform()
+
+actions.move_to_element(driver.find_element(By.XPATH,"//div[@id='__next']/div/aside[2]/div[2]/div/div[2]/ul/li/button/div[2]")).perform()
+driver.switch_to.window(driver.window_handles[1])
+print("done")
